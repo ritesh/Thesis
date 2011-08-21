@@ -32,6 +32,12 @@ Variants of the LSB steganography algorithm may use random bits of the host imag
 \section{Previous Work in Steganalysis}
 \label{sec:theory}
 Pfitzmann and Westfield \cite{westfeld2000attacks} describe two methods for analysing images for steganographic content. The first method is the use of visual techniques to identify whether an image could contain steganographic content.  This is done by first extracting the potential message bits (\emph{i.e.} bits of the image that may have been used for hiding data). The other bits of the image that are non steganographic are removed and only potential message bits are illustrated using black and white. This allows an observer to see that the image may contain data.
+\begin{figure}[h!]
+\includegraphics[scale=0.10]{visual1}
+\includegraphics[scale=0.10]{visual2}
+\caption{\emph{Blah}}
+\label{fig:visualattacks}
+\end{figure} 
 
 \par The second method utilises the $\chi^{2}$ statistical test to determine if the image contains steganographic content. In this method,  the theoretical expected frequency distribution of pixels in an image is compared with the actual frequency distribution of the pixels in the steganographic image. A deviation between these values indicates the presence of a steganographic message. This is possible as the tools used for creating the steganographic image incorrectly assume that the Least Significant Bits are random and can be overwritten to hide message. The authors claim that statistical tests provide a much higher accuracy than visual attacks and should be used when possible. 
 \par Building on the works of Pfitzmann et al  \cite{westfeld2000attacks}, Fridrich and Goljan \cite{fridrich2002practical} present a collection of qualitative methods for practical steganalysis. The authors extend the statistical analysis described by both Pfitzmann and Provos to include the spatial arrangement of pixels in a steganographic image referred to as ``Dual Statistical attacks''.  
