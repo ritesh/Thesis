@@ -1,8 +1,14 @@
-\chapter{Design and Implementation}
+\chapter{Design \& Implementation}
 \label{ch:dev}
 In this chapter the design and implementation of the experimental setup are discussed. The web crawler and the analysis module generate results that are stored in the database.
-\section Web Scraper
-A scraper allows an application to retrieve specific items from a web page. It consists of two main components, a web crawler that allows it to parse a large number of pages quickly and a scraping module that allows for the extraction of relevant content. A number of free and open source projects are available that provide both kinds of functionality. For this project, scrapy was used as the basis for the web scraper based on previous evaluations and it's excellent database connectivity options. Scrapy is a python web framework that can be used to build web crawlers/scrapers. It was designed to use pageScrapy in itself does not provide an implemention of a scraper, it simply provides a number of interfaces that can be used to create a web scraper.  
-\section Steganalysis tool
-\section Database
+\section {Web Scraper}
+\label{sec:scraper}
+A scraper allows an application to retrieve and store specific items from a web page. Any part of the HTML Document Object Model (DOM) can be extracted and for later processing. It consists of two main components, a web crawler that allows it to parse a large number of pages quickly and a scraping module that allows for the extraction of relevant content. A large number of free and open source projects are available that provide both kinds of functionality. For this project, scrapy was used as the basis for the web scraper based on previous evaluations and it's excellent database connectivity options. Scrapy is a python web framework that can be used to build web crawlers/scrapers. It was designed primarily for accessing websites that do not explicitly provide and Application Programming Interface (API).
+\par Scrapy in itself does not provide an implementation of a scraper, it simply provides a number of classes that can be used to create a web scraper. The crawler component was created by extending scrapy's \texttt{BaseSpider} class. The \texttt{BaseSpider} class requires the implementation of a \texttt{parse()} method that determines what happens when a page is scraped. The relevant elements in the HTML page are selected using HTML XPath queries. In this implementation, the \texttt{parse()} method yields subsequent HTTP requests that the crawler needs to make subsequently using the URLs found on the page. An \texttt{Item} class is created for each image found on the page. These images are then added to a python dictionary and returned to the \texttt{ImagePipeline} middleware.
+\par The \texttt{ImagePipeline} middleware is responsible for the scheduling and downloading of image files. For each dictionary of items returned by the crawler, the pipeline enqueues the URLs of the images found and downloads them asynchronously with a high priority. Downloaded images are named according to the MD5 hash of their contents so that they can be uniquely identified. 
+\section {Steganalysis}
+\label{sec:stegtool}
+Steganalysis on the downloaded images are carried out using \texttt{stegdetect} which is part of Provos' Outguess suite of steganography tools. \texttt{stegdetect} provides detection features for six different types of JPEG steganographic algorithms. It also provides extraction of JPEG features that can be used to extend its detection capabilities. For this project, \texttt{stegdetect} was used only to try and detect algorithms known to stegdetect. The detection was carried out using four different sensitivity settings in order to minimise false positives.   
+\section {Database}
+\label{sec:database}
 

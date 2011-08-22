@@ -31,11 +31,11 @@ Variants of the LSB steganography algorithm may use random bits of the host imag
 \end{itemize}
 \section{Previous Work in Steganalysis}
 \label{sec:theory}
-Pfitzmann and Westfield \cite{westfeld2000attacks} describe two methods for analysing images for steganographic content. The first method is the use of visual techniques to identify whether an image could contain steganographic content.  This is done by first extracting the potential message bits (\emph{i.e.} bits of the image that may have been used for hiding data). The other bits of the image that are non steganographic are removed and only potential message bits are illustrated using black and white. This allows an observer to see that the image may contain data.
+Pfitzmann and Westfield \cite{westfeld2000attacks} describe two methods for analysing images for steganographic content. The first method is the use of visual techniques to identify whether an image could contain steganographic content.  This is done by first extracting the potential message bits (\emph{i.e.} bits of the image that may have been used for hiding data). The other bits of the image that are non steganographic are removed and only potential message bits are illustrated using black and white as shown in Figure \ref{fig:visualattacks}. This allows an observer to see that the image may contain data.
 \begin{figure}[h!]
-\includegraphics[scale=0.10]{visual1}
-\includegraphics[scale=0.10]{visual2}
-\caption{\emph{Blah}}
+\includegraphics[scale=0.5]{visual1}
+\includegraphics[scale=0.5]{visual2}
+\caption{\emph{The image on the left contains steganographic data embedded in the lower half of the image. Visual attacks involve extracting and highlighting the areas of the image that could contain steganographic material as shown in the figure on the right}}
 \label{fig:visualattacks}
 \end{figure} 
 
