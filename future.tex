@@ -1,2 +1,49 @@
 \chapter{Future Work}
 \label{ch:futurework}
+The analysis of images for steganographic content is a vast 
+area of research. This project covers static steganalysis of
+a random sample of images using freely available tools. The evaluation
+of the experimental setup failed to conclusively prove the existence of
+steganography in the set of downloaded images. Other research that may
+provide more interesting results using the same data set are outlined
+below.
+\section{Steganalysis Using SVMs}
+\label{sec:futuresvm}
+A number of studies on the detection of steganographic content have been
+covered in Chapter \ref{ch:litsurvey}. Amongst these studies, the work
+of Farid \cite{farid2002detecting} provides the most promising results.
+Farid proposes a universal steganalysis experimental setup that utilise
+non linear Support Vector Machines (SVMs) for the classification of
+images into stego/non-stego categories. Classification relies on
+SVMs trained with features extracted from non stego images. The classification is claimed to
+be very accurate with a low false positive rate and a
+reasonable false negative rate. The main limitation of this
+setup is that the SVMs are trained to specific image sizes and each set
+of SVMs require a data set of images of the same size for feature extraction.
+\\
+It may be possible to create a number of different sets of SVMs for
+common image sizes in the data set. Most images are 358x268 pixels in
+size but a few of them are slightly bigger or smaller. By training SVMs
+on a set of clean 358x268 images, it would be possible to test a large
+percentage of the dataset for steganographic content. Similar sets of SVMs can be created for other
+image sizes in the collection.
+\section{Improving the Performance of Stegdetect}
+\label{sec:futurestegdetect}
+%stegdetect does not compile on gcc4 out of hte box
+% made few changes to make it to
+% stegdetect links against an old version of the jpeg library
+% need to update the jpeg lib version
+% refactor code
+% implement parallelisation
+% Re write stegbreak as it often segfaults
+
+
+\section{Realtime Image Steganography Detection}
+\label{sec:futurereal}
+Network based intrusion detection systems like SNORT provide means to
+create plugins for the realtime detection of suspicious data. A number
+of plugins exist for SNORT that provide malware/spyware detection at the
+network level. A similar plugin using stegdetect for detection of
+steganography can be created which would allow SNORT to flag and
+store a copy of images suspected to contain steganographic content.
+These images could later be analysed offline using a powerful system. 

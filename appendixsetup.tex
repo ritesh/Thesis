@@ -1,13 +1,31 @@
 \appendix
 \appendixpage
 \addappheadtotoc
-\chapter{Software Versions}
-Scrapy version = 1.2 available from http://scrapy
-\\Twisted version = 1.1 available from http://scrapy
-\\Python version >= 2.4 
-\\Operating systems tested on Linux, macos
+\chapter{Scraper and Stegdetect Setup}
+\
+The software required to run the experiment was written mostly in Python and is available as a gzipped bundle. It was tested on Fedora Linux and Mac OSX. It may work on Windows but has not been tested. A few helper scripts were written in \texttt{bash} to manage file splitting and scheduling. The following versions of software are needed  to run the project:
+\begin{itemize}
+\item{Scrapy}: version = 1.2. Scrapy provides the classes necessary to build a scraper. It is available from \url{http://scrapy.org/download/} as a gzipped archive that can be compiled from scratch or through python's easyinstall command. It is advisable to use the latest version of Scrapy available at the website for best results. 
+\item{Twisted}: version = 11.0.0. Twisted is an event driven network engine for Python. It provides a number of useful classes that can be used to build asynchronous software systems. It is freely available from \url{http://twistedmatrix.com/trac/}
+\item{Python} version >= 2.6.1. Any recent 2.6x version of Python should work. This project has not been tested on Python3. Python3 has a large number of new features that break backward compatibility with version 2.x.
+\item{stegdetect} version >= 0.5. Stegdetect provides multiple steganographic detection methods. The original can be downloaded here: \url{http://www.outguess.org/detection.php}. It was not possible to compile stegdetect from source for the x86\_64 platform. There are also a few errors thrown when trying to compile on the x86 platform with gcc4+.I created a modified distribution of stegdetect that fixes these bugs and is available on the CD. Interested readers may want to \texttt{diff} the provided source with the original distribution to see the changes I've made, mostly in \texttt{stegdetect.c}. It can be built on Linux using \texttt{./configure \&\& make \&\& make install}
+\end{itemize}
+Unzip the gzipped tar archive in any folder on a machine containing the software versions described above. You'll need to change the scraper/settings.py file to reflect the location of stored data. This can be done by modifying IMAGES\_STORE to a folder where images will be stored once downloaded. Optionally, the IMAGE\_MIN\_HEIGHT and IMAGES\_MIN\_WIDTH parameters can be modified to prevent images below a certain size threshold from being downloaded. An important parameter that needs to be changed is DOWNLOAD\_DELAY which controls how long scrapy waits between requests in seconds. This is set to prevent websites from blocking the crawler for making too many requests per second (scrapy can make well over a hundred requests per second).
+\singlespacing
+\lstinputlisting[language=Python, basicstyle=\footnotesize, frame=single]{settings.py}
+\setstretch{1.5}
+Other files that may need slight modifications are the spiders in the spiders folder. The current implementation uses URLs stored in a plaintext files to startup and scrapes them. These URLs were parsed from sitemaps from the sites being investigated. Sitemaps for ebay and gumtree were available but it was required to scrape the craigslist website by crawling (which is substantially slower). 
+
+Next, the database is to be prepared. The SQL required to create the tables has been provided as separate sql files that can be imported into the database (either through a Web UI like phpMyAdmin or the command line). 
+
+A few changes are required to be made to the database settings in order to store the information of the crawl. The changes are to be made in the pipelines.py file. The constructor of the \texttt{DbPipeline} class needs to be modified to the correct database settings. The software ships with a version that is hardcoded to connect to the 'storo' database with username 'ritesh'.
+
+Once these changes have been made, the scraper can be run from the command line using \texttt{scrapy crawl <spidername>} where spidername is the name of any of the spiders in the spiders directory. The images folder should now start populating with the images downloaded by the spiders after a few minutes.  The analysis is carried out using a separate wrapper script instead of an intermediate pipeline object. This was done to prevent the crawling process from slowing down.
+
+Analysis can be carried out using the provided \texttt{adb.py} script. The script expects two parameters: \texttt{--spidername} which is the name of the spider which downloaded the images and \texttt{--sensitivity} the sensitivity that \texttt{stegdetect} should run at. The sensitivity needs to be a real number that is greater than zero.
+\\Sample usage: \texttt{python adb.py --spidername espider --sensitivity 1.0}
+All generated results are stored in the analysis table in the database.   
+
 \chapter{Database Schema}
-MySQL version
-\\DB schema
-\chapter{Other Statistics}
-blah
+The application uses two tables to store data in the database. The schema of the tables is provided below with a description of each column. Running the provided mysql scripts will automatically generate these tables.
+\VerbatimInput[baselinestretch=1,fontsize=\footnotesize]{sqltables.txt}
