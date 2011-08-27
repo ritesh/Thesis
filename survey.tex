@@ -1,6 +1,63 @@
 \chapter{Literature Survey}
 \label{ch:litsurvey}
 In this section, prior work in the field of image steganography and steganalysis are explored. This chapter is divided into five sections. The first section discusses popular steganographic implementations that are to be detected by the experimental setup described in the following chapter. The second section provides an overview of tools that implement steganography. Software tools that implement various approaches to steganalysis are described in the third section. The final two sections of this chapter are dedicated to describing theoretical and practical attacks on steganography respectively.
+\section{The JFIF standard}
+\label{sec:jpeg}
+The project deals with the detection of steganography in JPEG images. Before covering the various steganographic schemes available for JPEG images, it is important to understand the structure of the JPEG file format. The JPEG File Interchange Format (JFIF) is the most common method used to convert images from their uncompressed forms, \emph{i.e.} bitmaps to a format that uses less space and provides an almost faithful reproduction of the original image. The algorithm used to convert the image is ``lossy'' in that it is not entirely bitwise equivalent to the original. By using a number of psychovisual tricks, the algorithm ensures the image is perceived exactly like the original. The JPEG standard provides for a quality value that can be used to provide a compromise between image size and image quality. Figure x shows the differences between a bitmap image and JPEG images created at different quality settings. Higher quality values ensure that the image is indistinguishable from the original while lower quality values blocky artefacts to be created in the image.
+
+In converting from a bitmap to a JPEG image, the JPEG algorithm works \cite{jstegjpeg} in the following way:
+\begin{itemize}
+\item{Image Conversion}: In a bitmap image, each of the pixels are represented using Red, Green and Blue intensity values. By varying each of these colours, it is possible to represent all colours on the palette. JPEG represent colours differently. Instead of RGB values for each pixel, they are represented by one luminance and two chrominance channels. The luminance channel represents the intensity of the pixel whereas the chrominance channels represent colours with a combination of Blue/Yellow and Red/Green. All the data from the original bitmap are still maintained.
+\item{Reduction of Chrominance values}: This is the first step where data from the original bitmap is discarded. The chrominance values of neighbouring pixels are averaged and represented by the same value. The averaging is done for small areas of the image (approx. 5-6 pixels) so that they do not produce visible changes in the appearance of the image.
+\item{The Discrete Cosine Transform Algorithm}: The image is now subdivided into 8x8 pixel blocks yielding vectors containing 64 elements. An example matrix obtained is shown in equation \ref{eq:dctbefore} A forward Discrete Cosine Transform (DCT) is applied on the elements of this vector and each element is represented as a coefficient of a non linear equation. The advantage of this step is that applying the DCT algorithm to the averaged pixels generates a large number of coefficients that are very low and may be subsequently discarded as shown in equation \ref{eq:dctafter}. Fewer bits are now required to represent each pixel location
+
+
+\begin{equation}
+\label{eq:dctbefore}
+\begin{bmatrix} 
+64 & 231 & 222 & 75 & 1 & 199 & 100 & 2 \\
+3 & 12 & 27 & 255 & 254 & 75 & 78 & 12 \\
+69 & 94 & 158 & 245 & 243 & 172 & 85 & 157 \\ 
+248 & 54 & 154 & 89 & 73 & 241 & 204 & 253 \\
+248 & 63 & 76 & 164 & 98 & 70 & 14 & 25 \\
+147 & 121 & 60 & 107 & 90 & 85 & 56 & 235 \\
+255 & 168 & 80 & 255 & 20 & 127 & 95 & 226 \\
+139 & 26 & 158 & 92 & 205 & 1 & 137 & 242 \\
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\label{eq:dctafter}
+\begin{bmatrix}
+1223 & 0 & 1 & -1 & 0 & 128 & 1 & -3 \\
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+-9 & 2 & 0 & -2 & 2 & -3 & 0 & 1 \\ 
+-8 & 2 & 1 & -2 & -3 & 0 & 0 & 2 \\
+4 & -1 & 0 & -4 & 1 & 703 & 11 & 2 \\
+1 & 1 & -60 & 0 & 0 & 0 & 1 & 2 \\
+2 & 1 & 0 & 0 & 0 & 1 & 1 & -1 \\
+139 & 26 & 158 & 92 & 221 & 0 & -1 & 2 \\
+
+\end{bmatrix}
+\end{equation}
+\item{Quantisation}: This step in the JPEG algorithm further reduces the values in matrix \ref{eq:dctafter} by dividing and rounding off each value from a quantisation table. The quantisation table changes based on the quality factor chosen while encoding a bitmap image. For lower quality images, each member of the quantisation table is very high causing the numbers in the 8x8 image sub block to become even smaller. After the quantisation step, most values in the lower right hand corner of the sub block are reduced to zero as shown in \ref{eq:afterquant} \footnote{The matrices described are contrived examples and are for illustration only}.
+\begin{equation}
+\label{eq:afterquant}
+\begin{bmatrix}
+121 & 0 & 1 & -1 & 0 & 2 & 1 & -3 \\
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+-1 & 1 & 0 & -2 & 2 & -3 & 0 & 0 \\ 
+0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 \\
+4 & -1 & 0 & 1 & 0 & 0 & 0 & 1 \\
+1 & 1 & -60 & 0 & 0 & 0 & -1 & 0 \\
+2 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+
+\end{bmatrix}
+\end{equation}
+\item{Ordering and Lossless Compression}: After obtaining the final 8x8 matrix as shown in \ref{eq:afterquant}, each sub block is now ordered in a zig-zag fashion starting from the top left corner. This ensures that the zeroes in the matrix are clumped together which provides better compression. By clustering the numbers together, they can be represented by a single tally value. Finally, the image block is compressed using a lossless Huffman \cite{huffman1952method} coding algorithm. All image blocks are compressed in this way. The Huffman trees required to recover the data are stored with the JPEG image itself.
+\end{itemize}
+The steganography algorithms described below utilise the properties unique to JPEG images for hiding data. Many steganographic tools make incorrect assumptions about the entropy of bits in the JPEG encoding phase and are thus vulnerable to easy detection.
 \section{Approaches to Image Steganography}
 \label{sec:overview}
 A large amount of literature exists on different methods to encode data in images. Early work in this area explore secure digital watermarking techniques for copyright enforcement which led to the creation of robust watermarking algorithms that were resilient to image manipulation. The use of similar techniques for secret communication using digital images followed thereafter. Freely available steganographic tools implement one or more of the following algorithms for embedding data in images. The data need not be restricted to text, it is possible to embed any other digital format into images. 
@@ -42,7 +99,7 @@ EzStego \cite{ezstego} is a free steganographic tool created by Romana Machado  
 \subsection{S-Tools}
 S-Tools \cite{stools} are a collection of steganographic tools that allow for data hiding in a number of digital file formats. Supported formats include WAV, GIF and BMP files. It is not possible to use a JPEG file as a medium for steganographic data using this software.  S-Tools also allows the user to choose between DES, Triple DES, IDEA and MDC encryption algorithms. In order to recover data from S-Tools created steganograms,  the user is required to know the passphrase that was used as the key to encrypt the data and the encryption algorithm used.  S-Tools is available for Windows and UNIX like operating systems.
 \subsection{JSteg} 
-JSteg \cite{jsteg} is a steganographic tool that allows a user to embed messages in JPEG files, the message size is limited to roughly 12\% of the image size. It has been extensively studied by a number of authors including Westfeld and Goljan. The image medium used is JPEG, which is a lossy image compression algorithm. Owing to this images containing data encoded with JSteg are immune to traditional visual attacks unlike EzStego, which requires an uncompressed Bitmap image as the medium. Due to the use of JPEG as an the medium, it is not possible to reliably isolate data that is encoded in the least significant bit field and prove the existence of steganography. Steganograms produced by JSteg are, however, still vulnerable to statistical attacks. JSteg is written in C and is available for Windows and UNIX like operating systems.
+JSteg \cite{jsteg} is a steganographic tool that allows a user to embed messages in JPEG files, the message size is limited to roughly 12\% of the image size. It has been extensively studied by a number of authors including Westfeld and Goljan. The image medium used is JPEG, which is a lossy image compression algorithm. Owing to this images containing data encoded with JSteg are immune to traditional visual attacks unlike EzStego, which requires an uncompressed Bitmap image as the medium. Due to the use of JPEG as an the medium, it is not possible to reliably isolate data that is encoded in the least significant bit field and prove the existence of steganography. Steganograms produced by JSteg overwrite the least significant bits of smaller DCT coefficients. JSteg is written in C and is available for Windows and UNIX like operating systems.
 \subsection{JPHide and Seek}
 JPHide and Seek \cite{jphide} was written by Alan Latham and it is exclusively designed to hide data in JPEG images. It's primary design goal is providing plausible deniability \emph{i.e.} it should be difficult or impossible to prove that a particular image contains steganographic data. This goal is acheived if the message length is less than 15\% of the size of the image and the image contains significant detail (\emph{e.g.} a picture of a forest with a river). Separate versions for Windows and Linux are available.
  \subsection{F5}

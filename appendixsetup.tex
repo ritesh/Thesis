@@ -1,8 +1,8 @@
 \appendix
 \appendixpage
 \addappheadtotoc
-\chapter{Scraper and Stegdetect Setup}
-\
+\chapter{Software Setup}
+\label{appendix:setup}
 The software required to run the experiment was written mostly in Python and is available as a gzipped bundle. It was tested on Fedora Linux and Mac OSX. It may work on Windows but has not been tested. A few helper scripts were written in \texttt{bash} to manage file splitting and scheduling. The following versions of software are needed  to run the project:
 \begin{itemize}
 \item{Scrapy}: version = 1.2. Scrapy provides the classes necessary to build a scraper. It is available from \url{http://scrapy.org/download/} as a gzipped archive that can be compiled from scratch or through python's easyinstall command. It is advisable to use the latest version of Scrapy available at the website for best results. 
@@ -27,5 +27,7 @@ Analysis can be carried out using the provided \texttt{adb.py} script. The scrip
 All generated results are stored in the analysis table in the database.   
 
 \chapter{Database Schema}
+\label{appendix:schema}
 The application uses two tables to store data in the database. The schema of the tables is provided below with a description of each column. Running the provided mysql scripts will automatically generate these tables.
 \VerbatimInput[baselinestretch=1,fontsize=\footnotesize]{sqltables.txt}
+
