@@ -3,7 +3,24 @@
 In this section, prior work in the field of image steganography and steganalysis are explored. This chapter is divided into five sections. The first section discusses popular steganographic implementations that are to be detected by the experimental setup described in the following chapter. The second section provides an overview of tools that implement steganography. Software tools that implement various approaches to steganalysis are described in the third section. The final two sections of this chapter are dedicated to describing theoretical and practical attacks on steganography respectively.
 \section{The JFIF standard}
 \label{sec:jpeg}
-The project deals with the detection of steganography in JPEG images. Before covering the various steganographic schemes available for JPEG images, it is important to understand the structure of the JPEG file format. The JPEG File Interchange Format (JFIF) is the most common method used to convert images from their uncompressed forms, \emph{i.e.} bitmaps to a format that uses less space and provides an almost faithful reproduction of the original image. The algorithm used to convert the image is ``lossy'' in that it is not entirely bitwise equivalent to the original. By using a number of psychovisual tricks, the algorithm ensures the image is perceived exactly like the original. The JPEG standard provides for a quality value that can be used to provide a compromise between image size and image quality. Figure x shows the differences between a bitmap image and JPEG images created at different quality settings. Higher quality values ensure that the image is indistinguishable from the original while lower quality values blocky artefacts to be created in the image.
+
+
+The project deals with the detection of steganography in JPEG images. Before covering the various steganographic schemes available for JPEG images, it is important to understand the structure of the JPEG file format. The JPEG File Interchange Format (JFIF) is the most common method used to convert images from their uncompressed forms, \emph{i.e.} bitmaps, to a format that uses less space and is a faithful reproduction of the original image. The algorithm used to convert the image is ``lossy'' in that it is not entirely bitwise equivalent to the original. By using a number of psychovisual tricks, the algorithm ensures the image is perceived exactly like the original to the human eye. The JPEG standard allows for the specification of a quality value that can be tweaked by the encoder to provide a compromise between image size and image quality. Figures \ref{fig:jpgquality} shows the differences in the appearance in JPEG images created at different quality settings. Higher quality values ensure that the image is indistinguishable from the original while lower quality values blocky artefacts to be created in the image as shown in \ref{fig:jpglowquality}.
+\begin{figure}
+\label{fig:jpgquality}
+\includegraphics{dogorig}
+\includegraphics{dog75}
+\includegraphics{dog50}
+\caption{\emph{The original image is shown on the left, the images that follow are encoded using a quality factor of 75\% and 50\% respectively. The visual changes are not readily apparent but can be noticed on examining the lower quality images under magnification.}}
+\end{figure}
+%new figure
+\begin{figure}
+\label{fig:jpglowquality}
+\includegraphics{dog25}
+\includegraphics{dog10}
+\includegraphics{dog5}
+\caption{\emph{The first image on the left is encoded using a quality factor of 25\% and the last two images have been encoded with quality factors of 10\% and 5\% respectively. The changes to the image are readily apparent as the quality factor is lowered below 25\%}}
+\end{figure}
 
 In converting from a bitmap to a JPEG image, the JPEG algorithm works \cite{jstegjpeg} in the following way:
 \begin{itemize}
